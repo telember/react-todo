@@ -28,8 +28,9 @@ class App extends React.Component {
     super(props)
 
     this.state = {
+      lastId: 0,
       todos: [{
-        value: 'Hello, world!', done: true
+        value: 'Just do it', done: true
       }],
       value: ''
     }
@@ -38,9 +39,9 @@ class App extends React.Component {
   addItem(e) {
     e.preventDefault()
     let todos = this.state.todos
-
     if (this.state.value.length != 0) {
       let todo = {
+        id: this.state.lastId++,
         value: this.state.value,
         done: false
       }
@@ -53,24 +54,27 @@ class App extends React.Component {
     return false
   }
 
-  removeItem(i) {
-    this.state.todos.splice(i, 1)
+  removeItem(id) {
+    this.state.todos = this.state.todos.filter(todo => todo.id !== id)
     this.setState({
       todos: this.state.todos
     })
   }
 
-  markDone(i) {
-    let todos = this.state.todos
-    let todo = this.state.todos[i]
-    todos.splice(i, 1)
-    if(todo){
-      todo.done = !todo.done
-      todo.done ? todos.push(todo) : todos.unshift(todo)
-    }
+  markDone(id) {
+    let todos = this.state.todos.map(todo => {
+      if(todo.id === id){
+        todo.done = !todo.done | false
+      }
+      return todo
+    })
     this.setState({
       todos: todos
     })
+  }
+
+  get todoNotComplete() {
+    return this.state.todos.filter(todo => !todo.done)
   }
 
   handleFormInput(e) {
@@ -84,8 +88,8 @@ class App extends React.Component {
           key={i}
           value={todo.value}
           done={todo.done}
-          onClickClose={this.removeItem.bind(this, i)}
-          onClickItem={this.markDone.bind(this, i)}
+          onClickClose={this.removeItem.bind(this, todo.id)}
+          onClickItem={this.markDone.bind(this, todo.id)}
         />
       )
     })
@@ -102,6 +106,11 @@ class App extends React.Component {
             </form>
         </header>
             {todos}
+
+        <footer class="footer">
+          <span class="todo-count">
+            <strong>{ this.todoNotComplete.length }</strong> { this.todoNotComplete.length == 1 ? 'item' : 'items' } left</span>
+        </footer>
       </section>
     )
   }
