@@ -1,6 +1,7 @@
 {
   "name": "my-app",
   "version": "0.1.0",
+  "git":"https://telember.github.io/react-todos",
   "private": true,
   "dependencies": {
     "react": "^16.0.0",
